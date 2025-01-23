@@ -897,6 +897,9 @@ static int set_sequencer(const struct device *dev)
 		}
 		LL_ADC_ClearFlag_CCRDY(adc);
 #endif /* !CONFIG_SOC_SERIES_STM32F0X && !L0X && !U5X && !WBAX */
+
+		// TODO: get mode from DTS
+		LL_ADC_REG_SetSequencerDiscont(adc, ADC_CFGR1_DISCEN);
 	}
 #endif /* ANY_ADC_SEQUENCER_TYPE_IS(NOT_FULLY_CONFIGURABLE) */
 
@@ -1082,6 +1085,11 @@ static void adc_stm32_isr(const struct device *dev)
 			if (IS_ENABLED(CONFIG_PM_S2RAM)) {
 				pm_policy_state_lock_put(PM_STATE_SUSPEND_TO_RAM,
 							 PM_ALL_SUBSTATES);
+			}
+		} else {
+			/* discontinuous mode, we need to retriger after each EOC */
+			if (READ_BIT(adc->CFGR1, ADC_CFGR1_CONT) == 0 && READ_BIT(adc->CFGR1, ADC_CFGR1_DISCEN)) {
+				LL_ADC_REG_StartConversion(adc);
 			}
 		}
 	}
