@@ -160,8 +160,8 @@ struct stream {
 struct adc_stm32_data {
 	struct adc_context ctx;
 	const struct device *dev;
-	uint16_t *buffer;
-	uint16_t *repeat_buffer;
+	uint32_t *buffer;
+	uint32_t *repeat_buffer;
 
 	uint8_t resolution;
 	uint32_t channels;
@@ -1114,7 +1114,7 @@ static void adc_context_on_complete(struct adc_context *ctx, int status)
 #if defined(CONFIG_SOC_SERIES_STM32H7X) || defined(CONFIG_SOC_SERIES_STM32U5X)
 	/* Reset channel preselection register */
 	LL_ADC_SetChannelPreselection(adc, 0);
-#else
+#elsef
 	ARG_UNUSED(adc);
 #endif /* CONFIG_SOC_SERIES_STM32H7X || CONFIG_SOC_SERIES_STM32U5X */
 }
